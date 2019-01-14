@@ -27,7 +27,7 @@ class ScaffoldGeneratorCLI < Thor
   desc 'scaffold NAME (e.g. `digital_coupons`)', 'Creates a file structure & base set of files for Lasso Modules.'
   def scaffold(name)
     set_supporting_data(name)
-    directory "source_files", "output/#{@plural_name}"
+    directory "source_files", "output/#{@plural_name}", :exclude_pattern => /.DS_Store/
     #template 'source_files/README.md.tt', "output/#{@plural_name}/README.md"
   end
 
