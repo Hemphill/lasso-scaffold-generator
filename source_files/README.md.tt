@@ -1,0 +1,207 @@
+# <%= @plural_name.titleize %>
+
+The consumer accounts feature uses a custom data type referenced as `grocery_consumer`.
+
+The idea is: we have one object that controls all the behavior and viewing of a consumer.
+
+## Overview
+
+To use the `grocery_consumer` you first want to initialize it by setting a variable to that type.
+
+```
+var( 'consumer' = grocery_consumer );
+```
+
+We can't do much with that because it's not bound to a consumer. If we know the `id` of a consumer we'd like to use we can use the `find` method as follow.
+
+```
+$consumer->find(123);
+```
+
+The `find` method will query the API for the consumer, and completely setup the object with data.
+
+
+Even better if we know the consumer's `id` up front we can feed it to the object when we create it.
+
+```
+var( 'consumer' = grocery_consumer(123) );
+```
+
+Most likely we won't know the consumer's `id` field, but will have access to the `consumer_credentials_{site}` cookie. We can look up a consumer using the `consumer_credentials` as follows
+
+
+```
+var( 'consumer' = grocery_consumer );
+$consumer->get_consumer_credentials;
+$consumer->get_consumer;
+```
+
+## Methods
+
+Public member methods.
+
+### onCreate
+
+This it triggered automatically when the consumer is created.
+
+#### Usage Examples
+
+If you already know the `id` of the consumer.
+
+```
+var( 'consumer' = grocery_consumer(123) );
+```
+
+If you don't know the `id` of the consumer yet or plan on using the `load_fields` method.
+
+```
+var( 'consumer' = grocery_consumer );
+```
+
+
+#### Parameters
+
+##### Base Parameter
+
+| Name | Type    | Description |
+|------|---------|-------------|
+| `id` | Integer | consumer unique id |
+
+##### Feature Parameters:
+
+| Name                           | Type    | Description |
+|--------------------------------|---------|-------------|
+| `consumer_credentials`         | String  | The unique key for the consumer used for authentication. |
+| `legacy_token`                 | String  | The deprecated unique key for the consumer used for legacy authentication. |
+| `legacy_id`                    | String  | The deprecated unique key for the consumer used for legacy associations. a.k.a. "card number". |
+
+
+
+##### Clip Logging Parameters:
+
+| Name                   | Type    | Description |
+|------------------------|---------|-------------|
+| `page_name`            | String  | Name of the current page. Defaults to `Lasso Web Page`. |
+| `page_tag`             | String  | If the consumer was displayed based on a `tag`, list it here. |
+| `page_url`             | String  | The URL of the page the consumer is displayed on. Defaults to `CURRENT_URL`. |
+| `click_source_type`    | String  | Defaults to `Web App`. Probably won't ever need to adjust this. |
+| `consumer_zip_code`    | String  | The zip code of the customer who clipped the consumer. |
+| `targeted_campaign_id` | Integer | If the consumer is displayed on the Targeted Campaign page, list the `targeted_campaign_id` here. |
+
+
+---
+
+### `find` Method
+
+The `find` method accepts the consumer's `id`, looks up the consumer and sets up all relevant information. Including: all the field data loaded, determines  and sets sharable state, determines and sets clipped state, determines and sets display state, and determines and sets clippable state.
+
+#### Examples
+
+Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+
+```
+$consumer->find(123);
+```
+
+If you are creating a new `grocery_consumer` object you can supply the consumer `id` and it will call the `find` method internally. As follows.
+
+```
+var( 'consumer' = grocery_consumer(123) );
+```
+
+Which is equivalent to:
+
+```
+var( 'consumer' = grocery_consumer );
+
+$consumer->find(123);
+```
+
+#### Parameter
+
+| Name | Type    | Description |
+|------|---------|-------------|
+| `id` | Integer | consumer unique id |
+
+
+---
+
+### `get_consumer_credentials` Method
+
+Finds the value of the `consumer_credentials` of the current visitor by looking at the browser cookies. Is meant to be paired with the `get_consumer` method.
+
+
+#### Usage Example
+
+```
+$consumer->get_consumer_credentials;
+```
+
+---
+
+### `render` Method
+
+Does everything the `find` method does, but you place it inside `record` tags instead of feeding it the `id` value of the consumer.
+
+#### Usage Example
+
+```
+$consumer->get_consumer;
+```
+
+---
+
+## Methods for External IDs
+
+Consumer Accounts allows us to connect with multiple 3rd Party Account Providers, e.g. Reach Influence, Inmar, Grocer Key, & etc. When a retailer has a 3rd Party Integration it will store records for each consumer we link up to a 3rd party account via the `external_ids` model. For each account on a 3rd party system we have one `external_id` record. Depending on the 3rd party they may have only one account for the customer or they can have multiple (i.e. accounts where consumers can have multiple cards). We identify the primary account for the consumer via the `primary_of_source` field. 
+
+We store from 1 to 3 unique identifiers for each external id record, some 3rd parties only use 1 or 2 while others might use all 3. They are: `reference_id`, `card_number`, and `credential`. We provide a method for accessing each of these on the consumer's primary account.
+
+
+### `card_number_for` Method
+
+The `card_number_for` method accepts the 3rd Party Account Provider's `name`, and looks up the consumer's primary account for the third party and returns the value of the consumer's `card_number`. 
+
+> The `card_number` field is usually the `card_number` field in the 3rd Party's database. It refers to the number printed on a physical card. It is used to identify consumers in a shopper card program.
+
+#### Examples
+
+Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+
+```
+$consumer->card_number_for('Reach');
+```
+
+
+#### Parameter
+
+| Name       | Type    | Description |
+|------------|---------|-------------|
+| `provider` | string  | 3rd Party Account Provider's name. Must match the value in the `external_consumer_providers` table. |
+
+---
+
+### `credential_for` Method
+
+The `credential_for` method accepts the 3rd Party Account Provider's `name`, and looks up the consumer's primary account for the third party and returns the value of the consumer's `credential`. 
+
+> The `credential` field is usually a 3rd Party's authentication or session token. It is often used in API calls, in cookies, or appended to URLs to authenticate a consumer with the 3rd Party. 
+
+#### Examples
+
+Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+
+```
+$consumer->credential_for('Reach');
+```
+
+
+#### Parameter
+
+| Name       | Type    | Description |
+|------------|---------|-------------|
+| `provider` | string  | 3rd Party Account Provider's name. Must match the value in the `external_consumer_providers` table. |
+
+---
+
+

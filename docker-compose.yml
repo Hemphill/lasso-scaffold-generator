@@ -1,0 +1,10 @@
+version: '2'
+services:
+  cli:
+    build: .
+    command: bash 
+    volumes:
+    - .:/code
+    - bundle:/usr/local/bundle
+volumes:
+  bundle:
