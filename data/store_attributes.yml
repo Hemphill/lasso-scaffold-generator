@@ -1,11 +1,45 @@
 ---
 -
+  name: id
+  field: id
+  type: integer
+  usage: optional
+-
+  name: store_number
+  field: StoreNbr
+  type: string
+  usage: optional
+-
   name: address
   field: Address1
-  type: String
-  usage: required
+  type: string
+  usage: optional
 -
   name: unit
   field: Address2
-  type: String
+  type: string
+  usage: optional
+-
+  name: city
+  field: City
+  type: string
+  usage: optional
+-
+  name: state_abbr
+  field: state
+  type: string
+  usage: optional
+-
+  name: state
+  field: StateLong
+  type: string
+  usage: optional
+-
+  name: zip
+  type: string
+  usage: optional
+-
+  name: store_number
+  field: StoreNbr
+  type: string
   usage: optional

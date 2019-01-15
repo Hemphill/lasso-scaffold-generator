@@ -1,8 +1,11 @@
+#$LOAD_PATH << './lib'
+
 require 'thor'
 require 'action_view'
 require 'active_support'
 require 'active_support/core_ext'
 require 'yaml'
+require_relative 'lib/helpers.rb'
 # require 'optparse'
 # require 'commandline/optionparser'
 
@@ -10,6 +13,7 @@ require 'yaml'
 class ScaffoldGeneratorCLI < Thor
   include Thor::Actions
   include ActionView::Helpers::TextHelper
+  include Helpers
   #include CommandLine
   
   #include ActiveSupport::Inflector

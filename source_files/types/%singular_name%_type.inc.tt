@@ -4,12 +4,10 @@ output_none;
     define_type('<%= @namespace + '_' + @singular_name %>');
       /* public attributes */
       local(
-        //attribute          default //database field
+        // attribute    default // database field
 
         'id'            = 0,
-        <% @attributes.each do |attr| %>
-
-        <% end %>
+        <%= declare_attributes(@attributes) %>
         'card_number'   = '',
         'list_number'   = '',
         'disabled'      = 0,
@@ -18,7 +16,15 @@ output_none;
         'notes'         = 0,
         'source'        = '',
 
-        //State
+        // Internal State
+        <%# @attributes %>
+        <%# declare_attribute({"name"=>"id", "field"=>"id", "type"=>"integer", "usage"=>"optional"}) %>
+        <%# declare_attribute({name: "id", field: "id", type: "integer", usage: "optional"}) %>
+        <%# declare_attribute({name: 'loaded', type: 'boolean', usage: 'internal'}) %>
+        <%# declare_attribute({name: 'error',  type: 'string',  usage: 'internal'}) %>
+
+        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}) %>
+        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}) %>
         'loaded'        = false,
         'error'         = '',
       );
