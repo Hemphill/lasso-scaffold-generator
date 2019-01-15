@@ -1,0 +1,11 @@
+---
+-
+  name: address
+  field: Address1
+  type: String
+  usage: required
+-
+  name: unit
+  field: Address2
+  type: String
+  usage: optional

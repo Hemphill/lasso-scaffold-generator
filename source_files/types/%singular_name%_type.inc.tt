@@ -1,0 +1,230 @@
+[
+output_none;
+  if( Lasso_TagExists( '<%= @namespace + '_' + @singular_name %>') == false);
+    define_type('<%= @namespace + '_' + @singular_name %>');
+      /* public attributes */
+      local(
+        //attribute          default //database field
+
+        'id'            = 0,
+        <% @attributes.each do |attr| %>
+
+        <% end %>
+        'card_number'   = '',
+        'list_number'   = '',
+        'disabled'      = 0,
+        'selected_list' = 0,
+        'name'          = '',
+        'notes'         = 0,
+        'source'        = '',
+
+        //State
+        'loaded'        = false,
+        'error'         = '',
+      );
+
+      define_tag('onCreate',
+        -optional='id',
+        -optional='card_number',
+        -optional='list_number',
+        -optional='disabled',
+        -optional='selected_list',
+        -optional='name',
+        -optional='notes',
+        -optional='source'
+      );
+
+        // Note: we set these variables using the set method because weird things happen when you set them directly in onCreate
+        local_defined('id')            ? self->set(-id=#id);
+        local_defined('card_number')   ? self->set(-card_number   = #card_number);
+        local_defined('list_number')   ? self->set(-list_number   = #list_number);
+        local_defined('disabled')      ? self->set(-disabled      = #disabled);
+        local_defined('selected_list') ? self->set(-selected_list = #selected_list);
+        local_defined('name')          ? self->set(-name          = #name);
+        local_defined('notes')         ? self->set(-notes         = #notes);
+        local_defined('source')        ? self->set(-source        = #source);
+
+        !self->card_number && $vCardNbr_LI ? self->set(-card_number = $vCardNbr_LI);
+
+      /define_tag;
+
+
+      define_tag('set',
+        -optional='id',
+        -optional='card_number',
+        -optional='list_number',
+        -optional='disabled',
+        -optional='selected_list',
+        -optional='name',
+        -optional='notes',
+        -optional='source'
+      );
+
+        local_defined('id')            && #id            ? self->find(-id=#id);
+        local_defined('card_number')   && #card_number   ? self->'card_number'   = #card_number;
+        local_defined('list_number')   && #list_number   ? self->'list_number'   = #list_number;
+        local_defined('disabled')      && #disabled      ? self->'disabled'      = #disabled;
+        local_defined('selected_list') && #selected_list ? self->'selected_list' = #selected_list;
+        local_defined('name')          && #name          ? self->'name'          = #name;
+        local_defined('notes')         && #notes         ? self->'notes'         = #notes;
+        local_defined('notes')         && #source        ? self->'source'        = #source;
+
+        !self->loaded ? self->find();
+
+      /define_tag;
+
+      define_tag('find',
+        -optional='id',
+        -optional='card_number',
+        -optional='list_number'
+      );
+        if(!self->loaded);
+          local_defined('id')          && #id          ? self->'id'          = #id;
+          local_defined('card_number') && #card_number ? self->'card_number' = #card_number;
+          local_defined('list_number') && #list_number ? self->'list_number' = #list_number;
+
+          local(
+            'label'='',
+            'value'='',
+            'criteria'=array(),
+            'criteria_set' = false
+          );
+
+          if(self->id);
+
+            #criteria->insert(-op = 'eq');
+            #criteria->insert(-id = self->id);
+
+          else(self->list_number);
+
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('ListNbr' = self->list_number);
+
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('SelectedList' = 1);
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('disabled' = 0);
+
+          else(self->card_number);
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('CardNbr' = self->card_number);
+
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('SelectedList' = 1);
+            #criteria->insert(-op = 'eq');
+            #criteria->insert('disabled' = 0);
+          /if;
+
+          if(#criteria_set);
+            inline( -search,
+              -Database=($vDB_ShoppingList),
+              -Table=($vTable_SL_Lists),
+              -UserName=($vDB_UserName),
+              -Password=($vDB_Password),
+
+              #criteria,
+
+              -maxrecords = 1
+            );
+
+              records;
+                self->load_fields;
+              /records;
+
+              !found_count ? self->create;
+            /inline;
+          /if;
+        /if; // skip if already loaded
+      /define_tag;
+
+      // TODO: make a more modern way to create a new shopping list
+      define_tag('create');
+        var('vListNbr' = '');
+        library( '/ShoppingList/Pages/List_Action_NewList.inc' );
+        $vListNbr ? #list_number = $vListNbr;
+        self->find(-list_number = #list_number);
+      /define_tag;
+
+
+      define_tag('load_fields');
+        self->'id'            = integer( field('id') );
+        self->'card_number'   = field('CardNbr');
+        self->'list_number'   = field('ListNbr');
+        self->'disabled'      = integer(field('disabled'));
+        self->'selected_list' = integer(field('SelectedList'));
+        self->'name'          = integer(field('ListName'));
+        self->'notes'         = integer(field('ListNotes'));
+        self->'source'        = integer(field('source'));
+
+        self->'loaded' = true;
+      /define_tag;
+
+      define_tag('update',
+        -optional='id',
+        -optional='card_number',
+        -optional='list_number',
+        -optional='disabled',
+        -optional='selected_list',
+        -optional='name',
+        -optional='notes',
+        -optional='source'
+      );
+
+        local_defined('id')            ? self->set(-id=#id);
+        local_defined('card_number')   ? self->set(-card_number   = #card_number);
+        local_defined('list_number')   ? self->set(-list_number   = #list_number);
+        local_defined('disabled')      ? self->set(-disabled      = #disabled);
+        local_defined('selected_list') ? self->set(-selected_list = #selected_list);
+        local_defined('name')          ? self->set(-name          = #name);
+        local_defined('notes')         ? self->set(-notes         = #notes);
+        local_defined('source')        ? self->set(-source        = #source);
+
+
+      /define_tag;
+
+      define_tag('save',
+        -optional='id',
+        -optional='card_number',
+        -optional='list_number',
+        -optional='disabled',
+        -optional='selected_list',
+        -optional='name',
+        -optional='notes',
+        -optional='source'
+      );
+
+        local_defined('id')            ? self->set(-id=#id);
+        local_defined('card_number')   ? self->set(-card_number   = #card_number);
+        local_defined('list_number')   ? self->set(-list_number   = #list_number);
+        local_defined('disabled')      ? self->set(-disabled      = #disabled);
+        local_defined('selected_list') ? self->set(-selected_list = #selected_list);
+        local_defined('name')          ? self->set(-name          = #name);
+        local_defined('notes')         ? self->set(-notes         = #notes);
+        local_defined('source')        ? self->set(-source        = #source);
+
+        if(self->id);
+          self->update;
+        else;
+          self->create;
+        /if;
+
+      /define_tag;
+
+
+
+
+
+      // define_tag('render',
+      //   -optional='on_date', -type=date,
+      //   -optional='class',   -type=string,
+      //   -optional='grid'//,    -type=boolean
+      // );
+      //   local('html' = '');
+      //   return(#html);
+      // /define_tag;
+
+    /define_type;
+  /if;
+/output_none;]
+
+

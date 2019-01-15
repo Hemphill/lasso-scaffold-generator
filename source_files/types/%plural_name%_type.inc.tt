@@ -1,0 +1,68 @@
+# Server Check
+
+See README.md for usage directions
+
+## Template:
+
+
+# 0.0
+
+| Date       | Programmed by                      |
+|------------|------------------------------------|
+| YYYY-MM-DD | { YOUR-NAME }                      |
+
+### Notes:
+
+{ YOUR NOTES HERE }
+
+### Associated Items:
+
+| Version | File, Folder, or Resource             |
+|--------:|---------------------------------------|
+|    `NA` | `NA`                                  |
+
+---
+
+
+_(don't forget the line break)_
+
+## Version Notes:
+
+# 1.0.1
+
+| Date       | Programmed by                      |
+|------------|------------------------------------|
+| 2017-03-02 | Greg Hemphill                      |
+
+### Notes:
+
+Should now handle all server groups and envs.
+
+### Associated Items:
+
+| Version | File, Folder, or Resource             |
+|--------:|---------------------------------------|
+|    `NA` | `NA`                                  |
+
+---
+
+
+
+# 1.0.0
+
+| Date       | Programmed by                      |
+|------------|------------------------------------|
+| 2017-03-02 | Greg Hemphill                      |
+
+### Notes:
+
+First Release.
+
+### Associated Items:
+
+| Version | File, Folder, or Resource             |
+|--------:|---------------------------------------|
+|    `NA` | `NA`                                  |
+
+---
+
