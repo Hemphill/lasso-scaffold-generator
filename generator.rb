@@ -62,20 +62,35 @@ class ScaffoldGeneratorCLI < Thor
     @singular_name = name
     @plural_name = ActiveSupport::Inflector.pluralize(name)
     @attributes = YAML.load(File.read("data/#{@singular_name}_attributes.yml"))
-    
+    # Largest Name
     names = []
     @attributes.each do |attr|
       names << attr['name']
     end
-    @largest_name = largest(names)
-    puts "@largest_name: #{@largest_name}"
+    @largest_name = largest(names, 10)
+    # Largest Default
+    defaults = []
+    @attributes.each do |attr|
+      if attr['type'] == 'integer'
+        defaults << '0' if attr['default'].blank?
+        defaults << "#{attr['default']}" if !attr['default'].blank?
+      elsif attr['type'] == 'boolean'
+        defaults << 'false' if attr['default'].blank?
+        defaults << "#{attr['default']}" if !attr['default'].blank?
+      else # string
+        defaults << "''" if attr['default'].blank?
+        defaults << "'#{attr['default']}'" if !attr['default'].blank?
+      end
+    end
+    @largest_default = largest(defaults, 5)
   end
   
-  def largest(items)
+  def largest(items, min)
     size = 0
     items.each do |item|
       size = item.size if item.size > size
     end
+    size = min if !min.blank? && size < min
     size
   end
   

@@ -36,10 +36,16 @@
   usage: optional
 -
   name: zip
+  field: Zip
   type: string
   usage: optional
 -
   name: store_number
   field: StoreNbr
   type: string
+  usage: optional
+-
+  name: open
+  field: open
+  type: integer
   usage: optional

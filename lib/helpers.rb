@@ -19,12 +19,30 @@ module Helpers
   def declare_attribute(attr)
     output =  "'#{attr['name']}' "
     output += spacer(attr['name'].size, @largest_name)
-    if attr['type'] == 'string' || attr['type'] == 'String'
-      output += "= '',    "
+    if attr['type'] == 'integer'
+      if attr['default'].blank?
+        output += '= 0, '
+        output += spacer(1, @largest_default)
+      else
+        output += "= #{attr['default']}, "
+        output += spacer(attr['default'].size, @largest_default)
+      end
     elsif attr['type'] == 'boolean'
-      output += '= false, '
-    else # integer
-      output += '= 0,     '
+      if attr['default'].blank?
+        output += '= false, '
+        output += spacer(5, @largest_default)
+      else
+        output += "= #{attr['default']}, "
+        output += spacer(attr['default'].size, @largest_default)
+      end
+    else # string
+      if attr['default'].blank?
+        output += "= '', "
+        output += spacer(2, @largest_default)
+      else
+        output += "= '#{attr['default']}', "
+        output += spacer(attr['default'].size + 2, @largest_default)
+      end
     end
     output += "// #{attr['field']}" unless attr['field'].blank?
     output
