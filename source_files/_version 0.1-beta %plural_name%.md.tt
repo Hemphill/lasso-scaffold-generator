@@ -1,11 +1,11 @@
-# Server Check
+# <%= @plural_name.titlize %>
 
 See README.md for usage directions
 
-## Template:
+## TEMPLATE:
 
 
-# 0.0
+# 0.0.0
 
 | Date       | Programmed by                      |
 |------------|------------------------------------|
@@ -23,46 +23,28 @@ See README.md for usage directions
 
 ---
 
-
 _(don't forget the line break)_
 
-## Version Notes:
 
-# 1.0.1
+
+## VERSION NOTES:
+
+# 0.0.1
 
 | Date       | Programmed by                      |
 |------------|------------------------------------|
-| 2017-03-02 | Greg Hemphill                      |
+| <%= Time.now.strftime("%Y-%m-%d") %> | Generator                          |
 
 ### Notes:
 
-Should now handle all server groups and envs.
+Initial generation of the <%= @plural_name %> product.
+
 
 ### Associated Items:
 
 | Version | File, Folder, or Resource             |
 |--------:|---------------------------------------|
-|    `NA` | `NA`                                  |
-
----
-
-
-
-# 1.0.0
-
-| Date       | Programmed by                      |
-|------------|------------------------------------|
-| 2017-03-02 | Greg Hemphill                      |
-
-### Notes:
-
-First Release.
-
-### Associated Items:
-
-| Version | File, Folder, or Resource             |
-|--------:|---------------------------------------|
-|    `NA` | `NA`                                  |
+|    `NA` | `library`                             |
 
 ---
 

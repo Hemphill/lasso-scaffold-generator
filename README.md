@@ -7,13 +7,21 @@ Scaffold generator for creating Lasso Objects.
 There is a command line interface (CLI), which allows you to run the scaffold generator, 
 and view the help documentation.
 
+### Overview
 
-## Supplying Attribute data
+The follow the steps below to create a new Lasso Module.
+
+1. Create an attributes YAML file. This is where you define all the attributes of your model. See the [1. Supplying Attribute data](#1-supplying-attribute-data) section below.
+2. Run the generate scaffold command. See the [2. Run the Generate Command](#2-run-the-generate-command) section below.
+3. Move the generated files to your Lasso website. See the [3. Install Files](#3-install-files) section below.
+4. See the [4. Configure Object Loading](#4-configure-object-loading) section below.
+
+### 1. Supplying Attribute data
 
 Copy the `data/_example_attributes.yml` and rename it replacing `_example` with the name of your Lasso Module. For 
 example, if your module was called `coupon`, name the file `coupon_attributes.yml`. 
 
-### Attribute Data File Format
+#### Attribute Data File Format
 
 The attribute data is a YAML file, and is formatted like the following example:
 
@@ -24,11 +32,13 @@ The attribute data is a YAML file, and is formatted like the following example:
   name: address
   field: Address1
   type: String
+  default: 
   usage: required
 -
   name: unit
   field: Address2
   type: String
+  default: 
   usage: optional
 ```
 
@@ -40,12 +50,14 @@ This produces the following in the Ruby code:
     name: 'address',
     field: 'Address1',
     type: 'String',
+    default: 
     usage: 'required' 
   },
   {
     name: 'unit',
     field: 'Address2',
     type: 'String',
+    default: 
     usage: 'optional' 
   }
 ]
@@ -72,4 +84,32 @@ This produces the following in the Ruby code:
 | `hidden`   | no           | yes                  |
 | `internal` | no           | no                   |
 | `virtual`  | yes          | no                   |
+
+### 2. Run the Generate Command
+
+1. First `cd` to the root of this app.
+2. Launch the app's Bash console. Enter the $`./bash` command. This will open a bash prompt running in a Docker container.
+3. Enter a command like `ruby ./generator.rb scaffold NAME` where `NAME` is the non-plural version of the module name, 
+  use all lowercase characters and underscore case (i.e. snakecase) format.
+
+This will generate all your files and place them inside the `output` folder. The code will be in a folder with the 
+plural version of the name you supplied to the generator command.
+
+### 3. Install Files
+
+After you've generated your new Lasso Module, you will find it in the `output` folder in the root of this project. To 
+install it in a Lasso website you'll need to drag-and-drop the module folder form the `output` folder into the root of 
+the Lasso website. Add 
+
+### 4. Configure Object Loading
+
+Add file path for the two new Lasso custom type files to the `load_custom_tags_and_types.inc` file. Similar to the Coupon 
+example below:  
+```object-c
+    // Coupon
+    '/coupons/Types/coupon_type.inc',
+    '/coupons/Types/coupons_type.inc',
+```
+
+This will make your new Lasso custom types available on every page of the web site.
 
