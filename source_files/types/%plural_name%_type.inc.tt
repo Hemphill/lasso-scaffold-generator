@@ -1,68 +1,171 @@
-# Server Check
+[
+output_none;
+  if( Lasso_TagExists( '<%= @namespace + '_' + @plural_name %>') == false);
+    define_type('<%= @namespace + '_' + @plural_name %>');
+      /* public attributes */
+      local(
+        // attribute <%= spacer(10, @largest_name) %>default <%= spacer(4, @largest_default) %>// database field
+        'ids' = array(),
+        <%= declare_attributes(@attributes) %>
 
-See README.md for usage directions
+        // Internal State
+        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}) %>
+        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}) %>
+      );
 
-## Template:
+      define_tag('onCreate',
+        -optional='ids',
+        <%= define_tag_inputs(@attributes) %>
+      );
 
+        // Note: we set these variables using the set method because weird things happen when you set them directly in onCreate
+        <%= assign_inputs(@attributes) %>
 
-# 0.0
-
-| Date       | Programmed by                      |
-|------------|------------------------------------|
-| YYYY-MM-DD | { YOUR-NAME }                      |
-
-### Notes:
-
-{ YOUR NOTES HERE }
-
-### Associated Items:
-
-| Version | File, Folder, or Resource             |
-|--------:|---------------------------------------|
-|    `NA` | `NA`                                  |
-
----
-
-
-_(don't forget the line break)_
-
-## Version Notes:
-
-# 1.0.1
-
-| Date       | Programmed by                      |
-|------------|------------------------------------|
-| 2017-03-02 | Greg Hemphill                      |
-
-### Notes:
-
-Should now handle all server groups and envs.
-
-### Associated Items:
-
-| Version | File, Folder, or Resource             |
-|--------:|---------------------------------------|
-|    `NA` | `NA`                                  |
-
----
+      /define_tag;
 
 
+      define_tag('set',
+        <%= define_tag_inputs(@attributes) %>
+      );
+        <%= set_attributes(@attributes) %>
 
-# 1.0.0
+        !self->loaded ? self->find();
 
-| Date       | Programmed by                      |
-|------------|------------------------------------|
-| 2017-03-02 | Greg Hemphill                      |
+      /define_tag;
 
-### Notes:
 
-First Release.
+      define_tag('find_by_tags', -required='tags', -optional='limit');
+        local_defined('limit') && #limit ? self->'limit'=#limit;
+        self->query('tags', -values=#tags, -operator='cn');
+      /define_tag;
 
-### Associated Items:
+      define_tag('find_by_ids', -required='ids', -optional='limit');
+        local_defined('limit') && #limit ? self->'limit'=#limit;
+        self->find(#ids);
+      /define_tag;
 
-| Version | File, Folder, or Resource             |
-|--------:|---------------------------------------|
-|    `NA` | `NA`                                  |
+      define_tag('find_by_provider_category', -required='provider_category', -optional='limit');
+        local_defined('limit') && #limit ? self->'limit'=#limit;
+        self->query('provider_category', -values=#provider_category);
+      /define_tag;
 
----
+      define_tag('find', -required='ids', -optional='limit');
+        local_defined('limit') && #limit ? self->'limit'=#limit;
+        self->query('id', -values=#ids);
+      /define_tag;
+
+
+
+
+      define_tag('find',
+        -optional='id'
+      );
+        if(!self->loaded);
+          local_defined('id') && #id ? self->'id' = #id;
+
+          local(
+            'label'='',
+            'value'='',
+            'criteria'=array(),
+            'criteria_set' = false
+          );
+
+          if(self->id);
+
+            #criteria->insert(-op = 'eq');
+            #criteria->insert(-id = self->id);
+            #criteria_set = true;
+
+            // You can use `else` statements here to find by data other that the ID
+
+          /if;
+
+          if(#criteria_set);
+            inline( -search,
+              -Database='',
+              -Table='',
+              -UserName=$vDB_UserName,
+              -Password=$vDB_Password,
+
+              #criteria,
+
+              -maxrecords = 1
+            );
+
+              records;
+                self->load_fields;
+              /records;
+
+            /inline;
+          /if;
+
+        /if; // skip if already loaded
+      /define_tag;
+
+
+      define_tag('load_fields');
+        <%= load_fields(@attributes) %>
+
+        self->'loaded' = true;
+      /define_tag;
+
+
+      define_tag('update',
+        <%= define_tag_inputs(@attributes) %>
+      );
+
+        <%= assign_inputs(@attributes) %>
+
+      /define_tag;
+
+      define_tag('update',
+        <%= define_tag_inputs(@attributes) %>
+      );
+
+        <%= assign_inputs(@attributes) %>
+
+        inline( -search,
+          -Database='',
+          -Table='',
+          -UserName=$vDB_UserName,
+          -Password=$vDB_Password,
+
+          <%= inline_params(@attributes) %>
+
+          -maxrecords = 1
+        );
+
+        /inline;
+
+      /define_tag;
+
+      define_tag('save',
+        <%= define_tag_inputs(@attributes) %>
+      );
+
+        <%= assign_inputs(@attributes) %>
+
+        if(self->id);
+          self->update;
+        else;
+          self->create;
+        /if;
+
+      /define_tag;
+
+      define_tag('render');
+
+        if(self->loaded == true);
+          return(include('/<%= @plural_name %>/display/<%= @singular_name %>.inc'));
+        else;
+          return('');
+        /if;
+
+      /define_tag;
+
+
+    /define_type;
+  /if;
+/output_none;]
+
 

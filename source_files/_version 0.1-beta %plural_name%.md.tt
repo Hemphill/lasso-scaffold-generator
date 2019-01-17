@@ -1,4 +1,4 @@
-# <%= @plural_name.titlize %>
+# <%= @plural_name.titleize %>
 
 See README.md for usage directions
 
@@ -44,7 +44,7 @@ Initial generation of the <%= @plural_name %> product.
 
 | Version | File, Folder, or Resource             |
 |--------:|---------------------------------------|
-|    `NA` | `library`                             |
+|      `` | `/library/`                           |
 
 ---
 

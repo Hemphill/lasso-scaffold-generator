@@ -56,10 +56,10 @@ output_none;
 
           if(#criteria_set);
             inline( -search,
-              -Database=($vDB_ShoppingList),
-              -Table=($vTable_SL_Lists),
-              -UserName=($vDB_UserName),
-              -Password=($vDB_Password),
+              -Database='',
+              -Table='',
+              -UserName=$vDB_UserName,
+              -Password=$vDB_Password,
 
               #criteria,
 
@@ -70,9 +70,9 @@ output_none;
                 self->load_fields;
               /records;
 
-              !found_count ? self->create;
             /inline;
           /if;
+
         /if; // skip if already loaded
       /define_tag;
 
@@ -83,11 +83,33 @@ output_none;
         self->'loaded' = true;
       /define_tag;
 
+
       define_tag('update',
         <%= define_tag_inputs(@attributes) %>
       );
 
         <%= assign_inputs(@attributes) %>
+
+      /define_tag;
+
+      define_tag('update',
+        <%= define_tag_inputs(@attributes) %>
+      );
+
+        <%= assign_inputs(@attributes) %>
+
+        inline( -search,
+          -Database='',
+          -Table='',
+          -UserName=$vDB_UserName,
+          -Password=$vDB_Password,
+
+          <%= inline_params(@attributes) %>
+
+          -maxrecords = 1
+        );
+
+        /inline;
 
       /define_tag;
 
