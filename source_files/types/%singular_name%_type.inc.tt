@@ -8,8 +8,9 @@ output_none;
         <%= declare_attributes(@attributes) %>
 
         // Internal State
-        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}) %>
-        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}) %>
+        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}, @largest_name, @largest_default) %>
+        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}, @largest_name, @largest_default) %>
+        <%= declare_attribute({"name"=>"lasso_error",  "type"=>"string",  "usage"=>"internal"}, @largest_name, @largest_default) %>
       );
 
       define_tag('onCreate',
@@ -18,6 +19,8 @@ output_none;
 
         // Note: we set these variables using the set method because weird things happen when you set them directly in onCreate
         <%= assign_inputs(@attributes) %>
+
+        self->'id' ? self->find();
 
       /define_tag;
 
@@ -38,40 +41,29 @@ output_none;
           local_defined('id') && #id ? self->'id' = #id;
 
           local(
-            'label'='',
-            'value'='',
             'criteria'=array(),
-            'criteria_set' = false
           );
 
           if(self->id);
-
             #criteria->insert(-op = 'eq');
             #criteria->insert(-id = self->id);
-            #criteria_set = true;
-
             // You can use `else` statements here to find by data other that the ID
-
           /if;
 
-          if(#criteria_set);
-            inline( -search,
-              -Database='',
-              -Table='',
-              -UserName=$vDB_UserName,
-              -Password=$vDB_Password,
+          inline( -search,
+            -Database=$vDB_Config,
+            -Table='<%= @plural_name %>',
+            -UserName=$vDB_UserName,
+            -Password=$vDB_Password,
+            #criteria,
+            -maxrecords = 1
+          );
 
-              #criteria,
+            records;
+              self->load_fields;
+            /records;
 
-              -maxrecords = 1
-            );
-
-              records;
-                self->load_fields;
-              /records;
-
-            /inline;
-          /if;
+          /inline;
 
         /if; // skip if already loaded
       /define_tag;
@@ -84,12 +76,30 @@ output_none;
       /define_tag;
 
 
-      define_tag('update',
+      define_tag('create',
         <%= define_tag_inputs(@attributes) %>
       );
 
         <%= assign_inputs(@attributes) %>
 
+        if(!self->id);
+          inline( -add,
+            -Database=$vDB_Config,
+            -Table='<%= @plural_name %>',
+            -UserName=$vDB_UserName,
+            -Password=$vDB_Password,
+            <%= inline_params(@attributes, @largest_name, false) %>
+          );
+
+            if(Error_CurrentError != Error_NoError);
+              self->'error' = 'Error creating <%= @singular_name %>.';
+              self->'lasso_error' = Error_CurrentError;
+            /if;
+
+          /inline;
+        else;
+         self->'error' = 'Record already exists.';
+        /if;
       /define_tag;
 
       define_tag('update',
@@ -98,16 +108,20 @@ output_none;
 
         <%= assign_inputs(@attributes) %>
 
-        inline( -search,
-          -Database='',
-          -Table='',
+        inline( -update,
+          -Database=$vDB_Config,
+          -Table='<%= @plural_name %>',
           -UserName=$vDB_UserName,
           -Password=$vDB_Password,
-
-          <%= inline_params(@attributes) %>
-
-          -maxrecords = 1
+          -KeyField = 'id',
+          -KeyValue = self->id,
+          <%= inline_params(@attributes, @largest_name, false) %>
         );
+
+          if(Error_CurrentError != Error_NoError);
+            self->'error' = 'Error updating <%= @singular_name %>.';
+            self->'lasso_error' = Error_CurrentError;
+          /if;
 
         /inline;
 

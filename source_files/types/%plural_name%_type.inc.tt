@@ -3,160 +3,119 @@ output_none;
   if( Lasso_TagExists( '<%= @namespace + '_' + @plural_name %>') == false);
     define_type('<%= @namespace + '_' + @plural_name %>');
       /* public attributes */
+      <%= @largest_plural_default %>
       local(
-        // attribute <%= spacer(10, @largest_name) %>default <%= spacer(4, @largest_default) %>// database field
-        'ids' = array(),
-        <%= declare_attributes(@attributes) %>
+        // attribute <%= spacer(10, @largest_plural_name) %>default <%= spacer(4, @largest_plural_default) %>// database field
+        'ids' <%= spacer(3, @largest_plural_name) %>= array(),
+        <%= declare_attributes(@plural_attributes, @largest_plural_name, @largest_plural_default) %>
+        '<%= @plural_name %>' <%= spacer(@plural_name.size, @largest_plural_name) %>= array(),
 
         // Internal State
-        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}) %>
-        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}) %>
+        <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}, @largest_plural_name, @largest_plural_default) %>
+        <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}, @largest_plural_name, @largest_plural_default) %>
       );
 
       define_tag('onCreate',
         -optional='ids',
-        <%= define_tag_inputs(@attributes) %>
+        <%= define_tag_inputs(@plural_attributes) %>
       );
 
         // Note: we set these variables using the set method because weird things happen when you set them directly in onCreate
-        <%= assign_inputs(@attributes) %>
+        <%= assign_inputs(@plural_attributes) %>
 
       /define_tag;
 
 
       define_tag('set',
-        <%= define_tag_inputs(@attributes) %>
+        <%= define_tag_inputs(@plural_attributes) %>
       );
-        <%= set_attributes(@attributes) %>
+
+        <%= set_attributes(@plural_attributes) %>
 
         !self->loaded ? self->find();
 
       /define_tag;
 
-
-      define_tag('find_by_tags', -required='tags', -optional='limit');
+      define_tag('all', -optional='limit');
         local_defined('limit') && #limit ? self->'limit'=#limit;
-        self->query('tags', -values=#tags, -operator='cn');
+        self->query('all');
       /define_tag;
 
-      define_tag('find_by_ids', -required='ids', -optional='limit');
-        local_defined('limit') && #limit ? self->'limit'=#limit;
-        self->find(#ids);
+      <%= find_by_tags(@plural_attributes) %>
+
+      /**
+       * Private method. Creates an array of pairs to be inserted into the middle of an inline tag.
+       *
+       * @param field (string) Name of the field to query by.
+       * @param values (array) List of values to search.
+       *
+       * @return (array of pairs) key and values to insert into an inline tag.
+       */
+      define_tag('inline_params', -required='field', -required='values', -optional='operator');
+        local('params' = array());
+        local_defined('operator') == false || #operator == '' ? local('operator' = 'eq');
+
+        #values->type != array ? #values = array(#values);
+
+        iterate(#values, local('value'));
+          #params->insert((-Op)=(#operator));
+          #params->insert((#field)=(#value));
+        /iterate;
+
+        return(#params);
       /define_tag;
 
-      define_tag('find_by_provider_category', -required='provider_category', -optional='limit');
-        local_defined('limit') && #limit ? self->'limit'=#limit;
-        self->query('provider_category', -values=#provider_category);
-      /define_tag;
-
-      define_tag('find', -required='ids', -optional='limit');
-        local_defined('limit') && #limit ? self->'limit'=#limit;
-        self->query('id', -values=#ids);
-      /define_tag;
-
-
-
-
-      define_tag('find',
-        -optional='id'
-      );
-        if(!self->loaded);
-          local_defined('id') && #id ? self->'id' = #id;
-
-          local(
-            'label'='',
-            'value'='',
-            'criteria'=array(),
-            'criteria_set' = false
-          );
-
-          if(self->id);
-
-            #criteria->insert(-op = 'eq');
-            #criteria->insert(-id = self->id);
-            #criteria_set = true;
-
-            // You can use `else` statements here to find by data other that the ID
-
-          /if;
-
-          if(#criteria_set);
-            inline( -search,
-              -Database='',
-              -Table='',
-              -UserName=$vDB_UserName,
-              -Password=$vDB_Password,
-
-              #criteria,
-
-              -maxrecords = 1
-            );
-
-              records;
-                self->load_fields;
-              /records;
-
-            /inline;
-          /if;
-
-        /if; // skip if already loaded
-      /define_tag;
-
-
-      define_tag('load_fields');
-        <%= load_fields(@attributes) %>
-
-        self->'loaded' = true;
-      /define_tag;
-
-
-      define_tag('update',
-        <%= define_tag_inputs(@attributes) %>
-      );
-
-        <%= assign_inputs(@attributes) %>
-
-      /define_tag;
-
-      define_tag('update',
-        <%= define_tag_inputs(@attributes) %>
-      );
-
-        <%= assign_inputs(@attributes) %>
-
-        inline( -search,
-          -Database='',
-          -Table='',
-          -UserName=$vDB_UserName,
-          -Password=$vDB_Password,
-
-          <%= inline_params(@attributes) %>
-
-          -maxrecords = 1
+      /**
+       * Queries the database for <%= @plural_name %>.
+       *
+       * @param field (string) Name of the field to query by.
+       * @param values (array) List of values to search.
+       *
+       * @return (array of <%= @namespace + '_' + @plural_name %> objects)
+       */
+      define_tag('query', -required='field', -required='values', -optional='operator');
+        local(
+          '<%= @singular_name %>' = '',
+          'inline_criteria' = array() // use this array to add important criteria to the search
         );
+        local_defined('operator') == false || #operator == '' ? local('operator' = 'eq');
+
+        inline: -search,
+          -Database=($vDB_Config),
+          -Table='<%= @plural_name %>',
+          -Username=($vDB_Username),
+          -Password=($vDB_Password),
+          -OpBegin=or,
+            self->inline_params(#field, -values=#values, -operator=#operator),
+          -OpEnd=or,
+          #inline_criteria,
+          $vRetailer_ID_Search_Inline,
+          -maxrecords = self->limit,
+          -SortRandom
+          ;
+
+          if(Error_CurrentError != Error_NoError);
+            self->'error' = 'Error looking up <%= @plural_name %>.';
+          else(!found_count);
+            self->'error' = '<%= @plural_name.titleize %> not available at this time.';
+          /if;
+
+          records;
+            #<%= @singular_name %> = <%= @namespace + '_' + @singular_name %>(
+            );
+            #<%= @singular_name %>->load_fields;
+            self->'<%= @plural_name %>'->insert(#<%= @singular_name %>);
+          /records;
 
         /inline;
 
-      /define_tag;
-
-      define_tag('save',
-        <%= define_tag_inputs(@attributes) %>
-      );
-
-        <%= assign_inputs(@attributes) %>
-
-        if(self->id);
-          self->update;
-        else;
-          self->create;
-        /if;
-
+        !self->'error' ? return(true) | return(false);
       /define_tag;
 
       define_tag('render');
 
         if(self->loaded == true);
-          return(include('/<%= @plural_name %>/display/<%= @singular_name %>.inc'));
+          return(include('/<%= @plural_name %>/display/<%= @plural_name %>.inc'));
         else;
           return('');
         /if;

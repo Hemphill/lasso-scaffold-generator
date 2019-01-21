@@ -14,6 +14,7 @@
   field: state
   type: string
   find_by: true
+  operator: eq
 -
   name: state
   field: StateLong
@@ -24,6 +25,7 @@
   field: Zip
   type: string
   find_by: true
+  operator: eq
 -
   name: open
   field: open

@@ -15,7 +15,7 @@ class ScaffoldGeneratorCLI < Thor
   include ActionView::Helpers::TextHelper
   include Helpers
   #include CommandLine
-  
+
   #include ActiveSupport::Inflector
 
   attr_accessor :name
@@ -24,7 +24,7 @@ class ScaffoldGeneratorCLI < Thor
   def self.source_root
     File.dirname(__FILE__)
   end
-     
+
   desc 'scaffold NAME', 'Creates a file structure & base set of files for Lasso Modules.'
   method_option :namespace, type: :string, default: 'grocery', aliases: '-n'
   method_option :help, type: :boolean, default: false
@@ -53,16 +53,17 @@ class ScaffoldGeneratorCLI < Thor
       @plural_name
     end
   }
-  
+
   private
-  
+
   def set_supporting_data(name)
     @namespace = options[:namespace]
-    @namespace += '_' unless @namespace.end_with?('_')
     @singular_name = name
+    @singular_css_class = @singular_name.gsub("_", "-").downcase
     @plural_name = ActiveSupport::Inflector.pluralize(name)
+    @plural_css_class = @plural_name.gsub("_", "-").downcase
     @attributes = YAML.load(File.read("data/#{@singular_name}_attributes.yml"))
-    @plural_attributes = YAML.load(File.read("data/#{@singular_name}_attributes.yml"))
+    @plural_attributes = YAML.load(File.read("data/#{@plural_name}_attributes.yml"))
     # Largest Name
     names = []
     @attributes.each do |attr|
@@ -106,7 +107,7 @@ class ScaffoldGeneratorCLI < Thor
     end
     @largest_plural_default = largest(plural_defaults, 5)
   end
-  
+
   def largest(items, min)
     size = 0
     items.each do |item|
@@ -115,7 +116,7 @@ class ScaffoldGeneratorCLI < Thor
     size = min if !min.blank? && size < min
     size
   end
-  
+
 end
 
 ScaffoldGeneratorCLI.start(ARGV)
