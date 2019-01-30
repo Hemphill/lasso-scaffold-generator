@@ -1,0 +1,6 @@
+<div class="<%= @plural_css_class %>">
+  <h1 class="<%= @plural_css_class %>-title"><%= @plural_name.titleize %></h1>
+
+  [$<%= @plural_name %>->render]
+
+</div>

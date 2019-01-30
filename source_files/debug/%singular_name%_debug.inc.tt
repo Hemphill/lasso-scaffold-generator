@@ -1,0 +1,20 @@
+<div class="<%= @singular_name %>-debug">
+  <h4><%= @singular_name %> Attributes</h4>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @attributes.each do |attr|
+      <tr>
+        <td><%= attr['name'] %></td>
+        <td>[#<%= @singular_name + '->' + attr['name'] %>]</td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

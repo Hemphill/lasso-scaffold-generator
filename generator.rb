@@ -26,8 +26,9 @@ class ScaffoldGeneratorCLI < Thor
   end
 
   desc 'scaffold NAME', 'Creates a file structure & base set of files for Lasso Modules.'
-  method_option :namespace, type: :string, default: 'grocery', aliases: '-n'
-  method_option :help, type: :boolean, default: false
+  method_option :namespace, type: :string,  default: 'grocery', aliases: '-n'
+  method_option :help,      type: :boolean, default: false
+  method_option :config,    type: :boolean, default: false
   def scaffold(name=nil)
     if options[:help]
       exec('ruby ./generator.rb help scaffold')
@@ -35,6 +36,7 @@ class ScaffoldGeneratorCLI < Thor
       puts 'ERROR: Name is required, but was left blank. Please try again and supply a name for your Lasso Module.'
     else
       set_supporting_data(name)
+      create_file "output/config/#{@plural_name}_config.inc" if options[:config]
       directory "source_files", "output/#{@plural_name}", :exclude_pattern => /.DS_Store/
     end
   end

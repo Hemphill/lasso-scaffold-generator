@@ -1,0 +1,6 @@
+<div class="<%= @singular_css_class %>">
+  <h4 class="<%= @singular_css_class %>-title"><%= @singular_name.titleize %></h4>
+
+  [$<%= @singular_name %>->render]
+
+</div>

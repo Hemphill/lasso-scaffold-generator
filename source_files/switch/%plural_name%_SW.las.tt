@@ -1,0 +1,37 @@
+[
+  output_none;
+    var:
+      'vAppFeature'='',
+      'vAppFunction'='',
+      'vFunctionStep'='',
+      'vFunctionStep2'='',
+      'vFunctionStep3'='',
+      'vFunctionStep4'='',
+      'vRequestType' = '',
+    ;
+
+    $vAppElementsCount >= 1 ? $vAppFeature    = $aAppElements->get( 1 );
+    $vAppElementsCount >= 2 ? $vAppFunction   = $aAppElements->get( 2 );
+    $vAppElementsCount >= 3 ? $vFunctionStep  = $aAppElements->get( 3 );
+    $vAppElementsCount >= 4 ? $vFunctionStep2 = $aAppElements->get( 4 );
+    $vAppElementsCount >= 5 ? $vFunctionStep3 = $aAppElements->get( 5 );
+    $vAppElementsCount >= 6 ? $vFunctionStep4 = $aAppElements->get( 6 );
+
+    !var_defined('site_javascripts') ? var('site_javascripts'='');
+    // var('date' = date(action_param('date'), -Format='%Q'));
+
+    select( $vAppFeature );
+
+      case('<%= @singular_name %>');
+        var('<%= @singular_name %>' = <%= @namespace + '_' @singular_name %>(
+          -id = $vAppFunction
+        ));
+
+      case; // 'Index' or anything else it doesn't recognize.
+        var('<%= @plural_name %>' = <%= @namespace + '_' @plural_name %>() );
+        $<%= @plural_name %>->all;
+
+    /select;
+
+  /output_none;
+]

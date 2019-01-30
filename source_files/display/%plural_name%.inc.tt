@@ -1,6 +1,3 @@
-<div class="<%= @plural_css_class %>">
-  <h1 class="<%= @plural_css_class %>-title"><%= @plural_name.titleize %></h1>
-
   <ul class="<%= @plural_css_class %>-list">
     [iterate(self-><%= @plural_name %>, local('<%= @singular_name %>'))]
 
@@ -10,4 +7,3 @@
 
     [/iterate]
   </ul>
-</div>
