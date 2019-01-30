@@ -22,14 +22,17 @@
 
     select( $vAppFeature );
 
-      case('<%= @singular_name %>');
-        var('<%= @singular_name %>' = <%= @namespace + '_' @singular_name %>(
-          -id = $vAppFunction
-        ));
+      //case('example');
+      //  var('<%= @singular_name %>' = <%= @namespace + '_' + @singular_name %>(-id = $vAppFunction));
 
-      case; // 'Index' or anything else it doesn't recognize.
-        var('<%= @plural_name %>' = <%= @namespace + '_' @plural_name %>() );
+      case('');
+        var('<%= @plural_name %>' = <%= @namespace + '_' + @plural_name %>() );
         $<%= @plural_name %>->all;
+        $vbody = '/<%= @plural_name %>/pages/<%= @plural_name %>_CS2_B.inc';
+
+      case; // id
+        var('<%= @singular_name %>' = <%= @namespace + '_' + @singular_name %>(-id = $vAppFeature));
+        $vbody = '/<%= @plural_name %>/pages/<%= @singular_name %>_CS2_B.inc';
 
     /select;
 

@@ -4,3 +4,5 @@
   [$<%= @plural_name %>->render]
 
 </div>
+
+[$vDebug ? include('/<%= @plural_name %>/debug/<%= @plural_name %>_debug.inc')]

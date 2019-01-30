@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-    <% @attributes.each do |attr|
+    <% @attributes.each do |attr| %>
       <tr>
         <td><%= attr['name'] %></td>
         <td>[#<%= @singular_name + '->' + attr['name'] %>]</td>

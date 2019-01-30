@@ -103,7 +103,7 @@ the Lasso website. Add
 
 ### 4. Configure Object Loading
 
-Add file path for the two new Lasso custom type files to the `load_custom_tags_and_types.inc` file. Similar to the Coupon 
+Add file path for the two new Lasso custom type files to the `/library/load_custom_tags_and_types.inc` file. Similar to the Coupon 
 example below:  
 ```object-c
     // Coupon

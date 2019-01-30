@@ -1,0 +1,33 @@
+---
+-
+  name: id
+  field: id
+  type: integer
+  find_by: true
+-
+  name: store_number
+  field: StoreNbr
+  type: string
+  find_by: true
+-
+  name: state_abbr
+  field: state
+  type: string
+  find_by: true
+  operator: eq
+-
+  name: state
+  field: StateLong
+  type: string
+  find_by: false
+-
+  name: zip
+  field: Zip
+  type: string
+  find_by: true
+  operator: eq
+-
+  name: open
+  field: open
+  type: integer
+  find_by: false
