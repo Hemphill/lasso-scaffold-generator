@@ -1,4 +1,4 @@
-<div class="<%= @singular_css_class %>">
+<div class="<%= @singular_css_class %> card card-block card-centered card-readable card-shadowed">
   <h4 class="<%= @singular_css_class %>-title"><%= @singular_name.titleize %></h4>
 
   [$<%= @singular_name %>->render]

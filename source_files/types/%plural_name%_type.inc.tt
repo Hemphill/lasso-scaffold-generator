@@ -3,7 +3,6 @@ output_none;
   if( Lasso_TagExists( '<%= @namespace + '_' + @plural_name %>') == false);
     define_type('<%= @namespace + '_' + @plural_name %>');
       /* public attributes */
-      <%= @largest_plural_default %>
       local(
         // attribute <%= spacer(10, @largest_plural_name) %>default <%= spacer(4, @largest_plural_default) %>// database field
         'ids' <%= spacer(3, @largest_plural_name) %>= array(),
@@ -13,6 +12,7 @@ output_none;
         // Internal State
         <%= declare_attribute({"name"=>"loaded", "type"=>"boolean", "usage"=>"internal"}, @largest_plural_name, @largest_plural_default) %>
         <%= declare_attribute({"name"=>"error",  "type"=>"string",  "usage"=>"internal"}, @largest_plural_name, @largest_plural_default) %>
+        <%= declare_attribute({"name"=>"limit",  "type"=>"integer", "usage"=>"internal"}, @largest_plural_name, @largest_plural_default) %>
       );
 
       define_tag('onCreate',
@@ -37,8 +37,36 @@ output_none;
       /define_tag;
 
       define_tag('all', -optional='limit');
+        local('<%= @singular_name %>' = '');
         local_defined('limit') && #limit ? self->'limit'=#limit;
-        self->query('all');
+
+        inline: -search,
+          -Database=($vDB_Config),
+          -Table='<%= @plural_name %>',
+          -Username=($vDB_Username),
+          -Password=($vDB_Password),
+          -KeyField='id',
+          $vRetailer_ID_Search_Inline,
+          -maxrecords = self->limit
+          ;
+
+          if(Error_CurrentError != Error_NoError);
+            self->'error' = 'Error looking up <%= @plural_name %>.';
+          else(!found_count);
+            self->'error' = '<%= @plural_name.titleize %> not available at this time.';
+          /if;
+
+          records;
+            #<%= @singular_name %> = <%= @namespace + '_' + @singular_name %>(
+            );
+            #<%= @singular_name %>->load_fields;
+            self->'<%= @plural_name %>'->insert(#<%= @singular_name %>);
+          /records;
+
+        /inline;
+
+        !self->'error' ? return(true) | return(false);
+
       /define_tag;
 
       <%= find_by_tags(@plural_attributes) %>
@@ -90,8 +118,7 @@ output_none;
           -OpEnd=or,
           #inline_criteria,
           $vRetailer_ID_Search_Inline,
-          -maxrecords = self->limit,
-          -SortRandom
+          -maxrecords = self->limit
           ;
 
           if(Error_CurrentError != Error_NoError);

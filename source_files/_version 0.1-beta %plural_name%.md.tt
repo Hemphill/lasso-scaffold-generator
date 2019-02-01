@@ -37,7 +37,16 @@ _(don't forget the line break)_
 
 ### Notes:
 
-Initial generation of the <%= @plural_name %> product.
+Initial generation of the <%= @plural_name %> resource.
+
+Add following file path for the two new Lasso custom type files to the `/library/load_custom_tags_and_types.inc` file.
+
+```
+    // <%= @plural_name.titleize %>
+    '/<%= @plural_name %>/types/<%= @singular_name %>_type.inc',
+    '/<%= @plural_name %>/types/<%= @plural_name %>_type.inc',
+```
+
 
 
 ### Associated Items:

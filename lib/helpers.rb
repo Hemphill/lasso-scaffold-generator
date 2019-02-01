@@ -141,17 +141,22 @@ module Helpers
     output
   end
 
-  def inline_params(attributes, largest=@largest_name, include_operater=true)
+  def inline_params(attributes, largest=@largest_name, include_operater=true, include_id=true)
     output = ''
     loop_count = 0
+    skip = false
     attributes.each do |attr|
-      loop_count += 1
-      output += '          ' if loop_count > 1
-      if(include_operater)
-        output += "-op = 'eq', "
-        output += '          '
+      skip = true if include_id == false && attr['name'] == 'id'
+      unless include_id == false && attr['name'] == 'id'
+        loop_count += 1
+        output += '          ' if loop_count > 1
+        if(include_operater)
+          output += "-op = 'eq', "
+          output += '          '
+        end
+        output += "-#{attr['name']}#{spacer(attr['name'].size, largest)}= self->#{attr['name']}, \n"
       end
-      output += "-#{attr['name']}#{spacer(attr['name'].size, largest)}= self->#{attr['name']}, \n"
+      skip = false
     end
     output
   end

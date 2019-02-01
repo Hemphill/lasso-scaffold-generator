@@ -1,4 +1,4 @@
-<div class="<%= @plural_name %>-debug card card-readable card-shadowed card-stackable card-centered">
+<div class="<%= @plural_name %>-debug card card-block card-centered card-readable card-shadowed">
   <h2><%= @plural_name %> Debug</h2>
 
   [iterate($<%= @plural_name %>.<%= @plural_name %>, local('<%= @singular_name %>')]

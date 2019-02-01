@@ -1,5 +1,11 @@
-<div class="<%= @singular_name %>-debug">
-  <h4><%= @singular_name %> Attributes</h4>
+[output_none;
+  if( !local_defined('<%= @singular_name %>') && var_defined('<%= @singular_name %>') );
+    local('<%= @singular_name %>' = $<%= @singular_name %>);
+  /if;
+/output_none]
+
+<div class="<%= @singular_name %>-debug card card-block card-centered card-readable card-shadowed">
+  <h4><%= @singular_name.titleize %> Debug: Attributes</h4>
 
   <table class="table table-striped">
     <thead>
