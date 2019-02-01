@@ -41,12 +41,13 @@ output_none;
         local_defined('limit') && #limit ? self->'limit'=#limit;
 
         inline: -search,
-          -Database=($vDB_Config),
+          -Database=$vDB_Config,
           -Table='<%= @plural_name %>',
           -Username=($vDB_Username),
           -Password=($vDB_Password),
           -KeyField='id',
           $vRetailer_ID_Search_Inline,
+          -op='eq', 'site' = $vSite,
           -maxrecords = self->limit
           ;
 
@@ -109,7 +110,7 @@ output_none;
         local_defined('operator') == false || #operator == '' ? local('operator' = 'eq');
 
         inline: -search,
-          -Database=($vDB_Config),
+          -Database=$vDB_Config,
           -Table='<%= @plural_name %>',
           -Username=($vDB_Username),
           -Password=($vDB_Password),
@@ -118,6 +119,7 @@ output_none;
           -OpEnd=or,
           #inline_criteria,
           $vRetailer_ID_Search_Inline,
+          -op='eq', 'site' = $vSite,
           -maxrecords = self->limit
           ;
 

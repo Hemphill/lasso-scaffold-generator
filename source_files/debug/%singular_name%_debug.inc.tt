@@ -4,23 +4,27 @@
   /if;
 /output_none]
 
-<div class="<%= @singular_name %>-debug card card-block card-centered card-readable card-shadowed">
-  <h4><%= @singular_name.titleize %> Debug: Attributes</h4>
+<br>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% @attributes.each do |attr| %>
-      <tr>
-        <td><%= attr['name'] %></td>
-        <td>[#<%= @singular_name + '->' + attr['name'] %>]</td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+<div class="<%= @singular_name %>-debug card card-block card-stackable card-centered card-readable card-shadowed">
+  <div class="card-body">
+    <h4 class="card-title"><%= @singular_name.titleize %> Debug: Attributes</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @attributes.each do |attr| %>
+        <tr>
+          <td><%= attr['name'] %></td>
+          <td>[#<%= @singular_name + '->' + attr['name'] %>]</td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

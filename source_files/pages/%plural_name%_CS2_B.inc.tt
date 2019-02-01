@@ -1,8 +1,19 @@
-<div class="<%= @plural_css_class %> card card-block card-centered card-readable card-shadowed">
-  <h1 class="<%= @plural_css_class %>-title"><%= @plural_name.titleize %></h1>
+<br>
 
-  [$<%= @plural_name %>->render]
+<div class="<%= @plural_css_class %> card card-block card-stackable card-centered card-readable card-shadowed">
+  <div class="card-body">
+    <h1 class="<%= @plural_css_class %>-title card-title"><%= @plural_name.titleize %></h1>
 
+    <p>We found [$<%= @plural_name %>-><%= @plural_name %>->size] <%= @plural_name %>.</p>
+
+    [iterate($<%= @plural_name %>-><%= @plural_name %>, local('<%= @singular_name %>'))]
+
+      <h4 class="store-title card-title"><a href="/<%= @plural_name %>/[#<%= @singular_name %>->id]"><%= @singular_name.titleize %> [#<%= @singular_name %>->id]</a></h4>
+      [#<%= @singular_name %>->render]
+
+    [/iterate]
+
+  </div>
 </div>
 
 [$vDebug ? include('/<%= @plural_name %>/debug/<%= @plural_name %>_debug.inc')]

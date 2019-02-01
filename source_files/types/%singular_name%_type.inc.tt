@@ -56,6 +56,7 @@ output_none;
             -UserName=$vDB_UserName,
             -Password=$vDB_Password,
             #criteria,
+            -op='eq', 'site' = $vSite,
             -maxrecords = 1
           );
 
@@ -89,6 +90,8 @@ output_none;
             -UserName=$vDB_UserName,
             -Password=$vDB_Password,
             <%= inline_params(@attributes, @largest_name, false, false) %>
+            'retailer_id' = $vRetailer_ID,
+            'site' = $vSite,
           );
 
             if(Error_CurrentError != Error_NoError);

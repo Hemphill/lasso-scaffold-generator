@@ -1,8 +1,14 @@
-<div class="<%= @singular_css_class %> card card-block card-centered card-readable card-shadowed">
-  <h4 class="<%= @singular_css_class %>-title"><%= @singular_name.titleize %></h4>
 
-  [$<%= @singular_name %>->render]
+<br>
 
+<div class="<%= @singular_css_class %> card card-block card-stackable card-centered card-readable card-shadowed">
+  <div class="card-body">
+    <h4 class="<%= @singular_css_class %>-title card-title"><%= @singular_name.titleize %></h4>
+
+    [$<%= @singular_name %>->render]
+
+    <p><a href="/<%= @plural_name %>/index"><%= @plural_name.titleize %> List</a></p>
+  </div>
 </div>
 
 [$vDebug ? include('/<%= @plural_name %>/debug/<%= @singular_name %>_debug.inc')]

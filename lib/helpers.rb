@@ -154,7 +154,7 @@ module Helpers
           output += "-op = 'eq', "
           output += '          '
         end
-        output += "-#{attr['name']}#{spacer(attr['name'].size, largest)}= self->#{attr['name']}, \n"
+        output += "'#{attr['name']}'#{spacer(attr['name'].size, largest)}= self->#{attr['name']}, \n"
       end
       skip = false
     end

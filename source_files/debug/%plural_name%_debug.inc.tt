@@ -1,9 +1,11 @@
-<div class="<%= @plural_name %>-debug card card-block card-centered card-readable card-shadowed">
-  <h2><%= @plural_name %> Debug</h2>
+<div class="<%= @plural_name %>-debug card card-block card-stackable card-centered card-readable card-shadowed">
+  <div class="card-body text-secondary">
+    <h2 class="card-title"><%= @plural_name %> Debug</h2>
 
-  [iterate($<%= @plural_name %>.<%= @plural_name %>, local('<%= @singular_name %>')]
+    [iterate($<%= @plural_name %>-><%= @plural_name %>, local('<%= @singular_name %>'))]
 
-    [include('/<%= @plural_name %>/debug/<%= @singular_name %>_debug.inc')]
+      [include('/<%= @plural_name %>/debug/<%= @singular_name %>_debug.inc')]
 
-  [/iterate]
+    [/iterate]
+  </div>
 </div>

@@ -26,7 +26,7 @@
       //case('example');
       //  var('<%= @singular_name %>' = <%= @namespace + '_' + @singular_name %>(-id = $vAppFunction));
 
-      case('');
+      case('index');
         var(
           '<%= @plural_name %>' = <%= @namespace + '_' + @plural_name %>(),
           'vbody' = '/<%= @plural_name %>/pages/<%= @plural_name %>_CS2_B.inc'
