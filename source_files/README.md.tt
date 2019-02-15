@@ -1,7 +1,7 @@
 # <%= @plural_name.titleize %>
 
 We have two basic objects (Lasso Custom Types) for managing and displaying <%= @plural_name %>. We have a `<%= @namespace  %>_<%= @plural_name %>`
-object which houses, manages, and displays collections of <%= @singular_name %> objects. We also have a `<%= @namespace  %>_<%= @singular_name %>`
+object which finds, houses, manages, and displays collections of <%= @singular_name %> objects. We also have a `<%= @namespace  %>_<%= @singular_name %>`
 object which houses, manages, and displays a single <%= @singular_name %> object.
 
 The idea is: we have one object that controls all the behavior and viewing of a <%= @singular_name %>. We have a second
@@ -28,7 +28,6 @@ $<%= @singular_name %>->find(123);
 ```
 
 The `find` method will query the API for the <%= @singular_name %>, and completely setup the object with data.
-
 
 Even better if we know the <%= @singular_name %>'s `id` up front we can feed it to the object when we create it.
 
@@ -76,7 +75,7 @@ var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %> );
 
 ---
 
-#### `find` Method
+#### The `find` Method
 
 The `find` method accepts the <%= @singular_name %>'s `id`, looks up the <%= @singular_name %> and sets up all relevant information.
 
@@ -109,10 +108,9 @@ $<%= @singular_name %>->find(123);
 |------|---------|-------------|
 | `id` | Integer | <%= @singular_name.titleize %> unique id |
 
-
 ---
 
-#### `load_fields` Method
+#### The `load_fields` Method
 
 When creating several `<%= @namespace  %>_<%= @singular_name %>` objects you will often want to perform an inline search
 and set a `<%= @namespace  %>_<%= @singular_name %>` object for each record found.
@@ -147,10 +145,9 @@ The above example makes one query to the database, gets the data for a bunch of
 but that would perform an additional database query for **every** <%= @singular_name %> we found in our initial inline.
 With the `load_fields` method we only make the one query, which can be much faster with large data sets.
 
-
 ---
 
-#### `create` Method
+#### The `create` Method
 
 The `create` method will create a new record in the database. It will persist all of the object's attribute
 data to the database. This method accepts **all** <%= @singular_name %> attributes as parameters.
@@ -166,7 +163,7 @@ section above for a complete list of parameters available.
 
 ---
 
-#### `update` Method
+#### The `update` Method
 
 The `update` method will update an existing record in the database. It will persist all of the object's attribute
 data to the database. This method accepts **all** <%= @singular_name %> attributes as parameters.
@@ -182,7 +179,7 @@ section above for a complete list of parameters available.
 
 ---
 
-#### `save` Method
+#### The `save` Method
 
 The `save` method will persist the <%= @singular_name %> object to the database.
 
@@ -202,13 +199,14 @@ section above for a complete list of parameters available.
 
 ---
 
-#### `render` Method
+#### The `render` Method
 
 The `render` method will check if data has been loaded into the object, and if it has will return the HTML of the object
 to display on a web page. The `/<%= @plural_name %>/display/<%= @singular_name %>.inc` file is used as the source of the
 HTML. The CSS and JavaScript for this object will already be included on the web page as part of our Core Styles framework.
 
-Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named
+`<%= @singular_name %>`.
 
 ```
 $<%= @singular_name %>->render;
@@ -218,4 +216,82 @@ Parameters: none.
 
 ---
 
+
 ## <%= @plural_name.titleize %> Object
+
+The `<%= @namespace  %>_<%= @plural_name %>` object finds, stores, manages, and displays collections of <%= @singular_name %>
+(`<%= @namespace  %>_<%= @singular_name %>`) objects.
+
+### <%= @singular_name.titleize %> Attributes
+
+| Name <%= spacer(4, @largest_plural_name) %> | Type    | Default | Description |
+|-------<%= spacer(4, @largest_name, '-') %>|---------|---------|-------------|
+| `<%= @plural_name %>`<%= spacer(@plural_name.size, @largest_plural_name) %>| array   |         | A collection of `<%= @namespace  %>_<%= @singular_name %>` objects. |
+<%= attributes_specs(@plural_attributes, @largest_plural_name, @largest_plural_default) %>
+
+### Internal State Attributes
+
+| Name     | Type    | Default | Description |
+|----------|---------|---------|-------------|
+| `loaded` | boolean | false   | Indicates if the object data has been loaded from the data source. |
+| `error`  | string  | blank   | A consumer friendly error message. |
+| `limit`  | string  | blank   | Places a limit on the number of records returned. |
+
+---
+
+
+### Methods
+
+Public member methods. We don't define private methods here because we don't expect you to access them in normal usage.
+
+
+#### The `all` Method
+
+The `all` method will query the database for all <%= @plural_name %> records. It will create a `<%= @namespace  %>_<%= @singular_name %>`
+object for each record found, and store them in the `<%= @plural_name %>` attribute.
+
+```
+$<%= @plural_name %>->all;
+```
+
+Parameters: none.
+
+---
+
+#### The `query` Method
+
+The `query` method will query the database for <%= @plural_name %> records. It accepts two parameters, the name of the
+database field to search against, and an array of values to search for. It will create a `<%= @namespace  %>_<%= @singular_name %>`
+object for each record found, and store them in the `<%= @plural_name %>` attribute.
+
+```
+$<%= @plural_name %>->query( -field='id', -values=array(1,2,3) );
+```
+
+##### Parameter
+
+| Name     | Type    | Description |
+|----------|---------|-------------|
+| `field`  | string  | The name of the database field to search. |
+| `values` | array   | The data to search for. |
+
+---
+
+#### The `render` Method
+
+The `render` method will check if data has been loaded into the object, if so, it will return the HTML for each of the
+of the object `<%= @namespace  %>_<%= @singular_name %>` objects stored in the `<%= @plural_name %>` attribute to display on a web page.
+
+It uses the `/<%= @plural_name %>/display/<%= @plural_name %>.inc` file as the source of the HTML layout.
+
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named
+`<%= @plural_name %>`.
+
+```
+$<%= @plural_name %>->render;
+```
+
+Parameters: none.
+
+---
+

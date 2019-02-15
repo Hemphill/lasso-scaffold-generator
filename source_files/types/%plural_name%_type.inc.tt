@@ -101,7 +101,7 @@ output_none;
        * @param field (string) Name of the field to query by.
        * @param values (array) List of values to search.
        *
-       * @return (array of <%= @namespace + '_' + @plural_name %> objects)
+       * @return (array of <%= @namespace + '_' + @singular_name %> objects)
        */
       define_tag('query', -required='field', -required='values', -optional='operator');
         local(
