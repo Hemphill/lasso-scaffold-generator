@@ -62,6 +62,7 @@ output_none;
             );
             #<%= @singular_name %>->load_fields;
             self->'<%= @plural_name %>'->insert(#<%= @singular_name %>);
+            self->'loaded' = true;
           /records;
 
         /inline;
@@ -134,6 +135,7 @@ output_none;
             );
             #<%= @singular_name %>->load_fields;
             self->'<%= @plural_name %>'->insert(#<%= @singular_name %>);
+            self->'loaded' = true;
           /records;
 
         /inline;
