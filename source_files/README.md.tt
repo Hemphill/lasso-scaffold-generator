@@ -1,207 +1,221 @@
 # <%= @plural_name.titleize %>
 
-The consumer accounts feature uses a custom data type referenced as `grocery_consumer`.
+We have two basic objects (Lasso Custom Types) for managing and displaying <%= @plural_name %>. We have a `<%= @namespace  %>_<%= @plural_name %>`
+object which houses, manages, and displays collections of <%= @singular_name %> objects. We also have a `<%= @namespace  %>_<%= @singular_name %>`
+object which houses, manages, and displays a single <%= @singular_name %> object.
 
-The idea is: we have one object that controls all the behavior and viewing of a consumer.
+The idea is: we have one object that controls all the behavior and viewing of a <%= @singular_name %>. We have a second
+object that manages selecting and controlling collections of <%= @plural_name %>.
 
-## Overview
-
-To use the `grocery_consumer` you first want to initialize it by setting a variable to that type.
-
-```
-var( 'consumer' = grocery_consumer );
-```
-
-We can't do much with that because it's not bound to a consumer. If we know the `id` of a consumer we'd like to use we can use the `find` method as follow.
-
-```
-$consumer->find(123);
-```
-
-The `find` method will query the API for the consumer, and completely setup the object with data.
+First we will cover the <%= @singular_name %> object as it is a more basic building block and then move on to the <%= @plural_name %>
+collection object.
 
 
-Even better if we know the consumer's `id` up front we can feed it to the object when we create it.
+## <%= @singular_name.titleize %> Object
+
+To use the `<%= @namespace  %>_<%= @singular_name %>` object you first want to initialize it by setting a variable to
+the `<%= @namespace  %>_<%= @singular_name %>` type.
 
 ```
-var( 'consumer' = grocery_consumer(123) );
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %> );
 ```
 
-Most likely we won't know the consumer's `id` field, but will have access to the `consumer_credentials_{site}` cookie. We can look up a consumer using the `consumer_credentials` as follows
-
-
-```
-var( 'consumer' = grocery_consumer );
-$consumer->get_consumer_credentials;
-$consumer->get_consumer;
-```
-
-## Methods
-
-Public member methods.
-
-### onCreate
-
-This it triggered automatically when the consumer is created.
-
-#### Usage Examples
-
-If you already know the `id` of the consumer.
+We can't do much with that because it's not bound to a <%= @singular_name %>. If we know the `id` of a <%= @singular_name %>
+we'd like to use we can use the `find` method as follow.
 
 ```
-var( 'consumer' = grocery_consumer(123) );
+$<%= @singular_name %>->find(123);
 ```
 
-If you don't know the `id` of the consumer yet or plan on using the `load_fields` method.
+The `find` method will query the API for the <%= @singular_name %>, and completely setup the object with data.
+
+
+Even better if we know the <%= @singular_name %>'s `id` up front we can feed it to the object when we create it.
 
 ```
-var( 'consumer' = grocery_consumer );
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %>(123) );
 ```
 
+### <%= @singular_name.titleize %> Attributes
 
-#### Parameters
+| Name <%= spacer(4, @largest_name) %> | Type    | Default | Description |
+|-------<%= spacer(4, @largest_name, '-') %>|---------|---------|-------------|
+<%= attributes_specs(@attributes) %>
 
-##### Base Parameter
+### Internal State Attributes
 
-| Name | Type    | Description |
-|------|---------|-------------|
-| `id` | Integer | consumer unique id |
-
-##### Feature Parameters:
-
-| Name                           | Type    | Description |
-|--------------------------------|---------|-------------|
-| `consumer_credentials`         | String  | The unique key for the consumer used for authentication. |
-| `legacy_token`                 | String  | The deprecated unique key for the consumer used for legacy authentication. |
-| `legacy_id`                    | String  | The deprecated unique key for the consumer used for legacy associations. a.k.a. "card number". |
-
-
-
-##### Clip Logging Parameters:
-
-| Name                   | Type    | Description |
-|------------------------|---------|-------------|
-| `page_name`            | String  | Name of the current page. Defaults to `Lasso Web Page`. |
-| `page_tag`             | String  | If the consumer was displayed based on a `tag`, list it here. |
-| `page_url`             | String  | The URL of the page the consumer is displayed on. Defaults to `CURRENT_URL`. |
-| `click_source_type`    | String  | Defaults to `Web App`. Probably won't ever need to adjust this. |
-| `consumer_zip_code`    | String  | The zip code of the customer who clipped the consumer. |
-| `targeted_campaign_id` | Integer | If the consumer is displayed on the Targeted Campaign page, list the `targeted_campaign_id` here. |
-
+| Name          | Type    | Default | Description |
+|---------------|---------|---------|-------------|
+| `loaded`      | boolean | false   | Indicates if the object data has been loaded from the data source. |
+| `error`       | string  | blank   | A consumer friendly error message. |
+| `lasso_error` | string  | blank   | Lasso's internal error message, not consumer friendly. |
 
 ---
 
-### `find` Method
+### Methods
 
-The `find` method accepts the consumer's `id`, looks up the consumer and sets up all relevant information. Including: all the field data loaded, determines  and sets sharable state, determines and sets clipped state, determines and sets display state, and determines and sets clippable state.
+Public member methods. We don't define private methods here because we don't expect you to access them in normal usage.
 
-#### Examples
+#### onCreate
 
-Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+This it triggered automatically when the `<%= @namespace  %>_<%= @singular_name %>` object is created.
 
-```
-$consumer->find(123);
-```
+##### Usage Examples
 
-If you are creating a new `grocery_consumer` object you can supply the consumer `id` and it will call the `find` method internally. As follows.
+If you already know the `id` of the <%= @singular_name %>.
 
 ```
-var( 'consumer' = grocery_consumer(123) );
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %>(123) );
+```
+
+If you don't know the `id` of the <%= @singular_name %> yet, or plan on using the `load_fields` method.
+
+```
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %> );
+```
+
+---
+
+#### `find` Method
+
+The `find` method accepts the <%= @singular_name %>'s `id`, looks up the <%= @singular_name %> and sets up all relevant information.
+
+##### Examples
+
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
+
+```
+$<%= @singular_name %>->find(123);
+```
+
+If you are creating a new `<%= @namespace  %>_<%= @singular_name %>` object you can supply the <%= @singular_name %> `id` and it
+will call the `find` method internally. As follows.
+
+```
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %>(123) );
 ```
 
 Which is equivalent to:
 
 ```
-var( 'consumer' = grocery_consumer );
+var( '<%= @singular_name %>' = <%= @namespace  %>_<%= @singular_name %> );
 
-$consumer->find(123);
+$<%= @singular_name %>->find(123);
 ```
 
-#### Parameter
+##### Parameter
 
 | Name | Type    | Description |
 |------|---------|-------------|
-| `id` | Integer | consumer unique id |
+| `id` | Integer | <%= @singular_name.titleize %> unique id |
 
 
 ---
 
-### `get_consumer_credentials` Method
+#### `load_fields` Method
 
-Finds the value of the `consumer_credentials` of the current visitor by looking at the browser cookies. Is meant to be paired with the `get_consumer` method.
+When creating several `<%= @namespace  %>_<%= @singular_name %>` objects you will often want to perform an inline search
+and set a `<%= @namespace  %>_<%= @singular_name %>` object for each record found.
 
-
-#### Usage Example
+##### Basic Usage Example
 
 ```
-$consumer->get_consumer_credentials;
+$<%= @singular_name %>->load_fields;
 ```
+
+Parameters: none. _Expects the existence of database fields for every <%= @singular_name %> attribute._
+
+##### Expanded Usage Example
+
+```
+var('<%= @plural_name %>' = <%= @namespace + '_' + @plural_name %>);
+inline(-search ... );
+  records;
+    local('<%= @singular_name %>' = <%= @namespace + '_' + @singular_name %>);
+    #<%= @singular_name %>->load_fields;
+    $<%= @plural_name %>->'<%= @plural_name %>'->insert(#<%= @singular_name %>);
+    $<%= @plural_name %>->'loaded' = true;
+  /records;
+/inline;
+```
+
+Parameters: none. _Expects the existence of database fields for every <%= @singular_name %> attribute._
+
+The above example makes one query to the database, gets the data for a bunch of
+`<%= @namespace + '_' + @singular_name %>` objects, creates those objects, and stores them in a collection object
+(`<%= @namespace + '_' + @plural_name %>`). Alternatively we could have used the `find` method (`#<%= @singular_name %>->find(field('id'));`),
+but that would perform an additional database query for **every** <%= @singular_name %> we found in our initial inline.
+With the `load_fields` method we only make the one query, which can be much faster with large data sets.
+
 
 ---
 
-### `render` Method
+#### `create` Method
 
-Does everything the `find` method does, but you place it inside `record` tags instead of feeding it the `id` value of the consumer.
+The `create` method will create a new record in the database. It will persist all of the object's attribute
+data to the database. This method accepts **all** <%= @singular_name %> attributes as parameters.
 
-#### Usage Example
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
 
 ```
-$consumer->get_consumer;
+$<%= @singular_name %>->create;
 ```
+
+Parameters: This method accepts all <%= @singular_name %> attributes as parameters. See the <%= @singular_name.titleize %> Attributes
+section above for a complete list of parameters available.
 
 ---
 
-## Methods for External IDs
+#### `update` Method
 
-Consumer Accounts allows us to connect with multiple 3rd Party Account Providers, e.g. Reach Influence, Inmar, Grocer Key, & etc. When a retailer has a 3rd Party Integration it will store records for each consumer we link up to a 3rd party account via the `external_ids` model. For each account on a 3rd party system we have one `external_id` record. Depending on the 3rd party they may have only one account for the customer or they can have multiple (i.e. accounts where consumers can have multiple cards). We identify the primary account for the consumer via the `primary_of_source` field. 
+The `update` method will update an existing record in the database. It will persist all of the object's attribute
+data to the database. This method accepts **all** <%= @singular_name %> attributes as parameters.
 
-We store from 1 to 3 unique identifiers for each external id record, some 3rd parties only use 1 or 2 while others might use all 3. They are: `reference_id`, `card_number`, and `credential`. We provide a method for accessing each of these on the consumer's primary account.
-
-
-### `card_number_for` Method
-
-The `card_number_for` method accepts the 3rd Party Account Provider's `name`, and looks up the consumer's primary account for the third party and returns the value of the consumer's `card_number`. 
-
-> The `card_number` field is usually the `card_number` field in the 3rd Party's database. It refers to the number printed on a physical card. It is used to identify consumers in a shopper card program.
-
-#### Examples
-
-Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
 
 ```
-$consumer->card_number_for('Reach');
+$<%= @singular_name %>->update;
 ```
 
-
-#### Parameter
-
-| Name       | Type    | Description |
-|------------|---------|-------------|
-| `provider` | string  | 3rd Party Account Provider's name. Must match the value in the `external_consumer_providers` table. |
+Parameters: This method accepts all <%= @singular_name %> attributes as parameters. See the <%= @singular_name.titleize %> Attributes
+section above for a complete list of parameters available.
 
 ---
 
-### `credential_for` Method
+#### `save` Method
 
-The `credential_for` method accepts the 3rd Party Account Provider's `name`, and looks up the consumer's primary account for the third party and returns the value of the consumer's `credential`. 
+The `save` method will persist the <%= @singular_name %> object to the database.
 
-> The `credential` field is usually a 3rd Party's authentication or session token. It is often used in API calls, in cookies, or appended to URLs to authenticate a consumer with the 3rd Party. 
+The `save` method will determine if the object represents a record currently stored in the database or is a new record.
+If the record already exists in the database it will run the `update` method (see above), or if the object represents a
+new record in the database it will run the `create` method (see above). _The `save` method basis it's decision to run
+`create` vs `update` based on if a value is stored in the `id` attribute or not._
 
-#### Examples
-
-Basic usage; when you have an existing `grocery_consumer` object named `consumer`.
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
 
 ```
-$consumer->credential_for('Reach');
+$<%= @singular_name %>->save;
 ```
 
-
-#### Parameter
-
-| Name       | Type    | Description |
-|------------|---------|-------------|
-| `provider` | string  | 3rd Party Account Provider's name. Must match the value in the `external_consumer_providers` table. |
+Parameters: This method accepts all <%= @singular_name %> attributes as parameters. See the <%= @singular_name.titleize %> Attributes
+section above for a complete list of parameters available.
 
 ---
 
+#### `render` Method
 
+The `render` method will check if data has been loaded into the object, and if it has will return the HTML of the object
+to display on a web page. The `/<%= @plural_name %>/display/<%= @singular_name %>.inc` file is used as the source of the
+HTML. The CSS and JavaScript for this object will already be included on the web page as part of our Core Styles framework.
+
+Basic usage: when you have an existing `<%= @namespace  %>_<%= @singular_name %>` object assigned to a variable named `<%= @singular_name %>`.
+
+```
+$<%= @singular_name %>->render;
+```
+
+Parameters: none.
+
+---
+
+## <%= @plural_name.titleize %> Object

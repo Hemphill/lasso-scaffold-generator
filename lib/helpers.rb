@@ -214,14 +214,47 @@ module Helpers
     output
   end
 
+  # Readme Helpers
+
+  def attributes_specs(attributes, largest=@largest_name, largest_default=7)
+    output = ''
+    attributes.each do |attr|
+      output += attribute_spec(attr, largest, largest_default)
+      output += "\n"
+    end
+    output
+  end
+
+  def attribute_spec(attr, largest, largest_default)
+    output =  "| `#{attr['name']}`"
+    output += spacer(attr['name'].size, largest)
+    output += "| #{attr['type']}"
+    output += spacer(attr['type'].size, 7)
+    if attr['default'].blank?
+      output += "| "
+      output += spacer(0, largest_default)
+    else
+      output += "| #{attr['default']}"
+      output += spacer(attr['default'].size, largest_default)
+    end
+    if attr['field'].blank?
+      output += "|             |"
+    elsif attr['field'] != attr['name']
+      output += "| Maps to the `#{attr['field']}` field. |"
+    else
+      output += "|             |"
+    end
+    output
+  end
+
 
   # Helper Utilities
 
-  def spacer(current, largest)
+  def spacer(current, largest, space=' ')
     spaces = ''
     x = largest.to_i - current.to_i
     while x >= 0
-      spaces += ' '
+      spaces += space
       x = x - 1
     end
     spaces
