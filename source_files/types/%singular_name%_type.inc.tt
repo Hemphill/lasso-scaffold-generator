@@ -46,7 +46,7 @@ output_none;
 
           if(self->id);
             #criteria->insert(-op = 'eq');
-            #criteria->insert(-id = self->id);
+            #criteria->insert('id' = self->id);
             // You can use `else` statements here to find by data other that the ID
           /if;
 
